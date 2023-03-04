@@ -3,11 +3,13 @@ from audio_recorder_streamlit import audio_recorder
 import openai
 import azure.cognitiveservices.speech as speechsdk
 
+## TODO secrets to be hidden
 openai.api_key = "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"
 azure_key = '2555c2cf67184a3aa0090f6fff7a33ef'
 azure_region = 'eastus'
-message_file = "message.wav"
+
 # Define parameters for recording
+message_file = "message.wav"
 message_file = "input-records/message.wav"
 sample_rate = 41000
 channels = 1
