@@ -4,9 +4,9 @@ import openai
 import azure.cognitiveservices.speech as speechsdk
 
 ## TODO secrets to be hidden
-openai.api_key = "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"
-azure_key = '2555c2cf67184a3aa0090f6fff7a33ef'
-azure_region = 'eastus'
+openai.api_key = st.secrets["openai_api_key"]
+azure_key = st.secrets['azure_key']
+azure_region = st.secrets['azure_region']
 
 # Define parameters for recording
 message_file = "message.wav"
