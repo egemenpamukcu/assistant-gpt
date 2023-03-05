@@ -2,6 +2,8 @@ import streamlit as st
 from audio_recorder_streamlit import audio_recorder
 import openai
 import azure.cognitiveservices.speech as speechsdk
+import numpy as np
+import os
 
 ## TODO secrets to be hidden
 openai.api_key = st.secrets["openai_api_key"]
@@ -9,10 +11,12 @@ azure_key = st.secrets['azure_key']
 azure_region = st.secrets['azure_region']
 
 # Define parameters for recording
-message_file = "message.wav"
-message_file = "input-records/message.wav"
+path = os.path.dirname(__file__)
+message_file = os.path.join(path, "input-records", "message.wav")
 sample_rate = 41000
 channels = 1
+
+st.write(path)
 
 option = st.selectbox(
     'Select your AI Assistant',
@@ -55,11 +59,13 @@ if 'messages' not in st.session_state:
 # TODO we can make it look nicer by changing some of its parameters
 audio_bytes = audio_recorder(sample_rate=sample_rate, text=f"Click to speak to {option}")
 if audio_bytes:
+
     with open(message_file, "wb") as audio_file: 
         audio_file.write(audio_bytes)
     with open(message_file, "rb") as audio_file:
         # transcribe audio using OpenAI's Whisper
-        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+        model = whisper.load_model("base")
+        transcript = openai.Audio.transcribe("whisper-1", audio_bytes)
     
     # show input test in the UI
     st.write(transcript['text'])
