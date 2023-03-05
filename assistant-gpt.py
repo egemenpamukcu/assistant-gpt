@@ -2,7 +2,6 @@ import streamlit as st
 from audio_recorder_streamlit import audio_recorder
 import openai
 import azure.cognitiveservices.speech as speechsdk
-import numpy as np
 import os
 
 ## TODO secrets to be hidden
