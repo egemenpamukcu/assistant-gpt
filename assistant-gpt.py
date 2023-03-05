@@ -4,6 +4,7 @@ import openai
 import azure.cognitiveservices.speech as speechsdk
 import os
 
+
 ## TODO secrets to be hidden
 openai.api_key = st.secrets["openai_api_key"]
 azure_key = st.secrets['azure_key']
@@ -92,11 +93,9 @@ if audio_bytes:
         st.session_state['messages'].pop(0)
 
     # set up MS Azure's Speech SDK for AI voice 
-    # (is this repeated everytime I speak? then it might be better to include this in the session state for better performance)
     speech_config = speechsdk.SpeechConfig(subscription=azure_key, region=azure_region)
-    audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
 
-    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
 
     # this is a markup language for Azure speech. Can change voice, tone (e.g. angry  or cheerful) etc. through this 
     # see here https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-synthesis-markup-voice
@@ -109,6 +108,8 @@ if audio_bytes:
     </voice>
     </speak>
     """
-    speech_synthesis_result = speech_synthesizer.speak_ssml_async(ssml).get()
+    speech_synthesis_result = speech_synthesizer.speak_ssml_async(ssml).get().audio_data
+    if speech_synthesis_result:
+        st.audio(speech_synthesis_result)
     
     # TODO interrupt speech with button
