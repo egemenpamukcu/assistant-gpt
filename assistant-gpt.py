@@ -3,6 +3,8 @@ from audio_recorder_streamlit import audio_recorder
 import openai
 import azure.cognitiveservices.speech as speechsdk
 import os
+import base64
+import streamlit.components.v1 as components
 
 
 ## TODO secrets to be hidden
@@ -15,8 +17,8 @@ path = os.path.dirname(__file__)
 message_file = os.path.join(path, "input-records", "message.wav")
 sample_rate = 41000
 channels = 1
+st.session_state['speech_html'] = ""
 
-st.write(path)
 
 option = st.selectbox(
     'Select your AI Assistant',
@@ -108,8 +110,18 @@ if audio_bytes:
     </voice>
     </speak>
     """
+
     speech_synthesis_result = speech_synthesizer.speak_ssml_async(ssml).get().audio_data
-    if speech_synthesis_result:
-        st.audio(speech_synthesis_result)
+
+    # Crappy way of auto playing audio with Streamlit. But it works. 
+    if speech_synthesis_result: 
+        speech_str = "data:audio/ogg;base64,{}".format(base64.b64encode(speech_synthesis_result).decode())
+        st.session_state['speech_html'] = """
+                            <audio autoplay class="stAudio">
+                            <source src="{}" type="audio/ogg">
+                            Your browser does not support the audio element.
+                            </audio>
+                        """.format(speech_str)
+        components.html(st.session_state['speech_html'])
     
     # TODO interrupt speech with button
