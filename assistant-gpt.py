@@ -63,7 +63,6 @@ if audio_bytes:
         audio_file.write(audio_bytes)
     with open(message_file, "rb") as audio_file:
         # transcribe audio using OpenAI's Whisper
-        model = whisper.load_model("base")
         transcript = openai.Audio.transcribe("whisper-1", audio_bytes)
     
     # show input test in the UI
