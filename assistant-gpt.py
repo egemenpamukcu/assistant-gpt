@@ -60,7 +60,7 @@ if 'messages' not in st.session_state:
 
 # this is the microphone component in the UI for recording https://pypi.org/project/audio-recorder-streamlit/
 # TODO we can make it look nicer by changing some of its parameters
-audio_bytes = audio_recorder(sample_rate=sample_rate, text=f"Click to speak to {option}")
+audio_bytes = audio_recorder(sample_rate=sample_rate, text=f"Click to speak to {option}", pause_threshold=2, energy_threshold=(0.005, 0.02))
 if audio_bytes:
 
     with open(message_file, "wb") as audio_file: 
