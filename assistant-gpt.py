@@ -22,7 +22,8 @@ st.session_state['speech_html'] = ""
 
 option = st.selectbox(
     'Select your AI Assistant',
-    ('Lily', 'Christopher'))
+    ('Christopher', 'Lily')
+    )
 
 assistant_dict = {
     'Christopher': {
