@@ -1,4 +1,10 @@
 .DS_Store
 .streamlit
 secrets.toml
-env/
+
+# Environment-specific files
+.env
+
+# Django-specific files
+*.pyc
+*.sqlite3
