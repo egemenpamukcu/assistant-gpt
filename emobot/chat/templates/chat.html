@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Chat with our Bot</h1>
+    <div id="chat-container">
+        <div id="chat-log"></div>
+        <form id="chat-form">
+            {% csrf_token %}
+            <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const chatLog = document.getElementById("chat-log");
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+
+        function addMessageToChatLog(message, isBot) {
+            const messageClass = isBot ? "message-bot" : "message-user";
+            const messageElement = document.createElement("div");
+            messageElement.className = messageClass;
+            messageElement.textContent = message;
+            chatLog.appendChild(messageElement);
+        }
+
+        function sendMessageToBot(message) {
+            const url = "/chat/api/chatbot/";  // Replace this with the URL of your chatbot API endpoint
+            const data = { message: message };
+            const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+            const headers = {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => handleBotResponse(data.message))
+            .catch(error => console.error(error));
+        }
+
+
+        function handleBotResponse(response) {
+            // Add the bot's response to the chat log
+            addMessageToChatLog(response, true);
+        }
+
+        chatForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const message = chatInput.value.trim();
+            if (message !== "") {
+                addMessageToChatLog(message, false);
+                sendMessageToBot(message);
+                chatInput.value = "";
+            }
+        });
+    </script>
+
+<style>
+    /* Chatbot container styles */
+    #chat-container {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        height: 100%;
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Chat log styles */
+    #chat-log {
+        overflow-y: auto;
+        height: 100%;
+        margin-bottom: 16px;
+    }
+
+    /* Chat input field styles */
+    #chat-input {
+        display: block;
+        width: 95%;
+        border: none;
+        border-radius: 24px;
+        padding: 16px;
+        font-size: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Chat input button styles */
+    #chat-form button {
+        display: block;
+        background-color: #3498db;
+        border: none;
+        border-radius: 24px;
+        color: #fff;
+        padding: 8px 16px;
+        font-size: 16px;
+        margin: 0 auto;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    #chat-form button:hover {
+        background-color: #2980b9;
+    }
+
+    /* Chat message bubble styles */
+    .message-bot,
+    .message-user {
+        background-color: #fff;
+        border-radius: 16px;
+        padding: 8px 16px;
+        font-size: 16px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 8px;
+    }
+
+    .message-bot {
+        color: #666;
+    }
+
+    .message-user {
+        color: #333;
+        text-align: right;
+    }
+
+    /* Make chatbot interface responsive */
+    @media only screen and (max-width: 768px) {
+        #chat-container {
+            margin-top: 16px;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        #chat-container {
+            margin-top: 8px;
+        }
+
+        #chat-log {
+            height: 200px;
+        }
+    }
+</style>
+
+
+{% endblock %}
