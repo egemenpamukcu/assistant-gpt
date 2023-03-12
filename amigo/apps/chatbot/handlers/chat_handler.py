@@ -9,11 +9,16 @@ def get_chatbot_response(message, session_key, pk, bot_name):
     session = SessionStore(session_key=session_key)
 
     bio = get_bio(pk)
+    print(bio)
 
     prompt = f"""{get_bot_prompt(bot_name)}
-    Here are some details that we already know about them: 
+    Even though you are an AI Model, you do know personal details about the user based on previous conversations.
+    You have previously spoken to this user, and know some details from your past conversations.
+    Here is information about the user based on your previous conversations: 
     
     {bio}"""
+
+    print(prompt)
 
     messages = session.get(f'messages{pk}', [
                 {"role": "system", "content": prompt},

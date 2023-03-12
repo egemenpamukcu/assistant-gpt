@@ -5,12 +5,15 @@ class UserProfile(AbstractUser):
     bio = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        self.bio = self.get_default_bio()
         if not self.bio:
             self.bio = self.get_default_bio()
         super().save(*args, **kwargs)
 
-    def get_default_bio():
-        return """Name: Unknown
+    def get_default_bio(self):
+        return f"""Name: Unknown
+
+        Preferred Name: Unknown 
 
         Age: Unknown
 

@@ -1,0 +1,4 @@
+Django==4.1.7
+openai==0.27.0
+python-dotenv==1.0.0
+social_auth_app_django==5.0.0

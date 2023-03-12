@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 
 def index(request):
     user = request.user
-    if f'messages{user}' in request.session:
-        del request.session[f'messages{user}']
+    if f'messages{user.pk}' in request.session:
+        del request.session[f'messages{user.pk}']
 
     if request.session.session_key is None:
         request.session.save()

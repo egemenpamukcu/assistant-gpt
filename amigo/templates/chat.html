@@ -6,7 +6,7 @@
         <div id="chat-log"></div>
         <form id="chat-form">
             {% csrf_token %}
-            <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
+            <input maxlength="1000" type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
             <button type="submit">Send</button>
         </form>
     </div>
