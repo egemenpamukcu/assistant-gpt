@@ -6,6 +6,10 @@ from .bio_handler import create_user_bio, save_bio
 
 
 def get_chatbot_response(message, session_key, pk, bot_name):
+
+    if (len(message) > 1000):
+        return "That's a log message, pal :)"
+
     session = SessionStore(session_key=session_key)
 
     bio = get_bio(pk)

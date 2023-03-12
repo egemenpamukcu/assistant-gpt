@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>Welcome, {{ user.first_name }}!</h1>
-    <h2>Choose a bot to talk to:</h2>
+    <h2>Choose a chatbot to talk to:</h2>
     <ul>
       {% for link in bot_links %}
         <li><a href="{{ link.url }}">{{ link.name }}</a></li>
