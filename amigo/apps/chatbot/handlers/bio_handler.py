@@ -1,32 +1,16 @@
 from django.contrib.auth import get_user_model
 from .openai_handler import get_assistant_message
+
 User = get_user_model()
 
-
-def get_bio(user_social):
-    try:
-        user = User.objects.get(user_social=user_social)
-        return user.bio
-    except User.DoesNotExist:
-        return """Name: Unknown
-
-        Age: Unknown
-
-        Occupation: Unknown
-
-        Interests: Unknown
-
-        Personality traits: Unknown
-
-        Other relevant information: Unknown."""
+def get_bio(pk):
+    user = User.objects.get(pk=pk)
+    return user.bio
     
-def save_bio(user_social, bio):
-    try:
-        user = User.objects.get(user_social=user_social)
-        user.bio = bio
-        user.save()
-    except User.DoesNotExist:
-        User.objects.create(user_social=user_social, bio=bio)
+def save_bio(pk, bio):
+    user = User.objects.get(pk=pk)
+    user.bio = bio
+    user.save()
 
 def get_bio_creation_prompt(bio, messages):
     return f"""Generate a new bio for the user based on the following information:

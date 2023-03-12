@@ -12,7 +12,7 @@ def home(request):
         for bot in bots:
             bot_links.append({
                 'name': bot.name,
-                'url': f'/bot/?bot_id={bot.id}',
+                'url': f'/chat/?name={bot.name}',
             })
         context = {'bot_links': bot_links}
         return render(request, 'home.html', context=context)

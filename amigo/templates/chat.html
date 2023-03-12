@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Chat with our Bot</h1>
-    <div id="chat-container">
+    <h1>Chat with {{ name }}</h1>
+        <div id="chat-container">
         <div id="chat-log"></div>
         <form id="chat-form">
             {% csrf_token %}
@@ -28,9 +28,9 @@
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
-        function sendMessageToBot(message) {
+        function sendMessageToBot(message, name) {
             const url = "/chat/api/chatbot/";  // Replace this with the URL of your chatbot API endpoint
-            const data = { message: message };
+            const data = { message: message, name: name };
             const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
             const headers = {
                 "Content-Type": "application/json",
@@ -58,7 +58,8 @@
             const message = chatInput.value.trim();
             if (message !== "") {
                 addMessageToChatLog(message, false);
-                sendMessageToBot(message);
+                const name = '{{ name }}';
+                sendMessageToBot(message, name);
                 chatInput.value = "";
             }
         });
