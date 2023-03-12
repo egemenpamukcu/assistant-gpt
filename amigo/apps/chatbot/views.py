@@ -1,23 +1,32 @@
 from django.shortcuts import render
 import json
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .chatbot import get_chatbot_response
-
-from .models import Bot
+from .handlers.chat_handler import get_chatbot_response
+from django.contrib.auth.decorators import login_required
 
 def index(request):
-    test = Bot.objects.filter()
+    user = request.user
+    if f'messages{user}' in request.session:
+        del request.session[f'messages{user}']
+
+    if request.session.session_key is None:
+        request.session.save()
     return render(request, 'chat.html')
 
 
-@csrf_exempt
+@login_required
 def chatbot_api(request):
+    user = request.user
+
     if request.method == "POST":
         try:
             data = json.loads(request.body)
             message = data["message"]
-            response = get_chatbot_response(message)
+            session_key = request.session.session_key
+            if not session_key:
+                request.session.save()
+            session_key = request.session.session_key
+            response = get_chatbot_response(message, session_key, user, 'Josh')
             return JsonResponse({"message": response})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON in request body."}, status=400)

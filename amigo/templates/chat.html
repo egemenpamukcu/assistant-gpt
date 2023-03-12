@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Chat with our Bot</h1>
+    <div id="chat-container">
+        <div id="chat-log"></div>
+        <form id="chat-form">
+            {% csrf_token %}
+            <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const chatLog = document.getElementById("chat-log");
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+
+        function addMessageToChatLog(message, isBot) {
+            chatLog.scrollTo(0, chatLog.scrollHeight);
+            const messageClass = isBot ? "message-bot" : "message-user";
+            const messageElement = document.createElement("div");
+            messageElement.className = messageClass;
+            messageElement.textContent = message;
+            chatLog.appendChild(messageElement);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function sendMessageToBot(message) {
+            const url = "/chat/api/chatbot/";  // Replace this with the URL of your chatbot API endpoint
+            const data = { message: message };
+            const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+            const headers = {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => handleBotResponse(data.message))
+            .catch(error => console.error(error));
+        }
+
+
+        function handleBotResponse(response) {
+            // Add the bot's response to the chat log
+            addMessageToChatLog(response, true);
+        }
+
+        chatForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const message = chatInput.value.trim();
+            if (message !== "") {
+                addMessageToChatLog(message, false);
+                sendMessageToBot(message);
+                chatInput.value = "";
+            }
+        });
+    </script>
+
+{% block styles %}
+    <style>
+        /* Chat container */
+        #chat-container {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Chat log */
+        #chat-log {
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+            max-height: 300px;
+            height: 300px;
+            margin-bottom: 10px;
+        }
+
+        .message-bot {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            max-width: 70%;
+            align-self: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .message-user {
+            background-color: #fff;
+            border: 1px solid #d4d4d4;
+            border-radius: 10px;
+            padding: 10px;
+            max-width: 70%;
+            align-self: flex-end;
+            margin-bottom: 10px;
+        }
+
+        /* Chat input */
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #chat-input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 16px;
+            width: calc(100% - 80px);
+        }
+
+        #chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        /* Chat submit button */
+        button[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0069d9;
+        }
+
+        /* Fonts */
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input,
+        button {
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% if user.is_authenticated %}
+
+{% block content %}
+    <h1>Welcome, {{ user.username }}!</h1>
+    <h2>Choose a bot to talk to:</h2>
+    <ul>
+      {% for link in bot_links %}
+        <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+      {% endfor %}
+    </ul>
+  <a href="{% url 'logout' %}">Logout</a>
+{% endblock %}
+{% else %}
+    <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
+{% endif %}
